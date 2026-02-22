@@ -1,10 +1,16 @@
-sleep 1000
-podTemplate(containers: [containerTemplate(name: 'maven', image: 'maven', command: 'sleep', args: 'infinity')]) {
-  node(POD_LABEL) {
-    checkout scm
-    container('maven') {
-      sh 'mvn -B -ntp -Dmaven.test.failure.ignore verify'
+pipeline {
+    agent any
+    tools {
+        maven 'M3'
     }
-    junit '**/target/surefire-reports/TEST-*.xml'
-  }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+                
+                // This runs the exact Linux command requested by your lab
+                sh 'sleep 1000' 
+            }
+        }
+    }
 }
